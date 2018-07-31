@@ -1,0 +1,7 @@
+clear all;
+clc
+
+
+fnames = ('*.csv')
+
+x,y=size(fnames)
