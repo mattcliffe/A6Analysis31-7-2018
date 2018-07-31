@@ -14,12 +14,33 @@ import numpy as np
 import matplotlib.pyplot as plt 
 
 
+def LoadGovData():
+    fname = 'Gov_Data_31-7-2018.csv'
+
+    pmr = np.genfromtxt(fname,delimiter=',',skip_header=1,usecols=2)
+    date = np.genfromtxt(fname,dtype=str,delimiter=',',skip_header=1,usecols=0)
+    time = np.genfromtxt(fname,dtype=str,delimiter=',',skip_header=1,usecols=1)
+    
+    date_dt=[]
+    for lmn in np.linspace(0,len(date)-1,len(date)):
+        lmn = int(lmn)
+        date_dt.append(datetime.datetime.strptime(date[lmn],'%d/%m/%Y'))    
+        
+    time_dt = []
+    for lmn in np.linspace(0,len(date)-1,len(date)):
+        lmn = int(lmn)
+        time_dt.append(datetime.datetime.strptime(time[lmn],'%H:%M:%S').time())    
+        
+    dt = [] 
+    
+    for lmn in np.linspace(0,len(time_dt)-1,len(time_dt)):
+        lmn = int(lmn)
+        dt.append(datetime.datetime.combine(date_dt[lmn],time_dt[lmn]))
+        
+    return dt,pmr
 
 
-
-
-
-path = r'/run/media/mjayk/Media_1/Documents/AirXD/A6'
+path = r'/run/media/mjayk/Media_1/Documents/AirXD/A6Analysis31-7-2018'
 os.chdir(path)
 
 fnames = glob.glob('*.CSV')
@@ -41,20 +62,19 @@ for lmn in np.linspace(0,len(fnames)-1,len(fnames)):
         prq= int(prq)
         datet.append(datetime.datetime.combine(date,dt[prq]))
         
-    window = 6*60
+    window = 6*60*2
     averagepmr = MJC.running_mean(pmr,window)
     
     
     plt.figure(1)
-    plt.plot_date(datet,pmr,marker='.',c='r',alpha=0.25,markersize=1)
+    #plt.plot_date(datet,pmr,marker='.',c='r',alpha=0.25,markersize=1)
     plt.plot_date(datet,averagepmr,linestyle='solid',marker=',',c='r')
     plt.grid(True)
     
-
-
+    
+dt,govpmr = LoadGovData()
+plt.plot_date(dt,govpmr)
     
     
-
-    plt.pause(0.00001)
-    plt.show()
+plt.show()
     
