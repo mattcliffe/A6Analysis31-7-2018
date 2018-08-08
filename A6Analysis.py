@@ -39,41 +39,50 @@ def LoadGovData():
         
     return dt,pmr
 
-
-path = r'/run/media/mjayk/Media_1/Documents/AirXD/A6Analysis31-7-2018'
-os.chdir(path)
-
-fnames = glob.glob('*.CSV')
+def LoadTrolexData(plot,scatter):
+    path = r'/run/media/mjayk/Media_1/Documents/AirXD/A6Analysis31-7-2018'
+    os.chdir(path)
+    
+    fnames = glob.glob('*.CSV')
+    
+   
+    
+    
+    for lmn in np.linspace(0,len(fnames)-1,len(fnames)):
+        lmn = int(lmn)
+        fname = fnames[lmn]
+        date = datetime.datetime.strptime(fname[0:6],'%y%m%d')
+        
+        
+        datet = [] 
+        bindata, sfr, sampletime, dt, volume, density, xx, pmr = MJC.LoadFile(fname,path)
+        
+        for prq in np.linspace(0,len(dt)-1,len(dt)):
+            prq= int(prq)
+            datet.append(datetime.datetime.combine(date,dt[prq]))
+            
+        window = 6*60*2
+        averagepmr = MJC.running_mean(pmr,window)
+        
+        if plot == 1:
+        
+            plt.figure(1)
+            if scatter == 1:
+                plt.plot_date(datet,pmr/1.65,marker='.',c='r',alpha=0.25,markersize=1)
+            
+            plt.plot_date(datet,averagepmr,linestyle='solid',marker=',',c='r')
+            plt.grid(True)
+        
 
 plt.figure(1)
 plt.clf()
-
-
-for lmn in np.linspace(0,len(fnames)-1,len(fnames)):
-    lmn = int(lmn)
-    fname = fnames[lmn]
-    date = datetime.datetime.strptime(fname[0:6],'%y%m%d')
-    
-    
-    datet = [] 
-    bindata, sfr, sampletime, dt, volume, density, xx, pmr = MJC.LoadFile(fname,path)
-    
-    for prq in np.linspace(0,len(dt)-1,len(dt)):
-        prq= int(prq)
-        datet.append(datetime.datetime.combine(date,dt[prq]))
-        
-    window = 6*60*2
-    averagepmr = MJC.running_mean(pmr,window)
-    
-    
-    plt.figure(1)
-    #plt.plot_date(datet,pmr,marker='.',c='r',alpha=0.25,markersize=1)
-    plt.plot_date(datet,averagepmr,linestyle='solid',marker=',',c='r')
-    plt.grid(True)
-    
-    
+LoadTrolexData(1,1)   
 dt,govpmr = LoadGovData()
 plt.plot_date(dt,govpmr)
+plt.xlabel('Date / Time')
+plt.ylabel('PM 10')
+plt.title('2 Hour TWA for Trolex data')
+plt.ylim([0,200])
     
     
 plt.show()
