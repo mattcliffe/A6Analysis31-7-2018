@@ -13,6 +13,17 @@ import datetime as datetime
 import numpy as np 
 import matplotlib.pyplot as plt 
 
+def running_mean(x, N):
+    if len(x) >=N:
+        cumsum = np.cumsum(np.insert(x, 0, 0)) 
+        avg = np.zeros(len(x))
+        avg[N-2:len(x)-1]=(cumsum[N:] - cumsum[:-N]) / float(N)
+        avg[0:N] = np.cumsum(x[0:N])/N
+
+    else:
+        avg = np.cumsum(x)/N
+    return avg
+
 
 def LoadGovData():
     fname = 'Gov_Data_31-7-2018.csv'
@@ -40,7 +51,7 @@ def LoadGovData():
     return dt,pmr
 
 def LoadTrolexData(plot,scatter):
-    path = r'/run/media/mjayk/Media_1/Documents/AirXD/A6Analysis31-7-2018'
+    path = r'C:\Users\mattj\OneDrive - trolex\AirXD\A6Analysis31-7-2018'
     os.chdir(path)
     
     fnames = glob.glob('*.CSV')
@@ -62,7 +73,7 @@ def LoadTrolexData(plot,scatter):
             datet.append(datetime.datetime.combine(date,dt[prq]))
             
         window = 6*60*2
-        averagepmr = MJC.running_mean(pmr,window)
+        averagepmr = running_mean(pmr,window)
         
         if plot == 1:
         
@@ -79,6 +90,7 @@ plt.clf()
 LoadTrolexData(1,1)   
 dt,govpmr = LoadGovData()
 plt.plot_date(dt,govpmr)
+plt.plot_date()
 plt.xlabel('Date / Time')
 plt.ylabel('PM 10')
 plt.title('2 Hour TWA for Trolex data')
