@@ -86,15 +86,15 @@ def LoadTrolexData(plot,scatter):
         
 
 plt.figure(1)
-plt.clf()
+#plt.clf()
 LoadTrolexData(1,1)   
 dt,govpmr = LoadGovData()
 plt.plot_date(dt,govpmr)
-plt.plot_date()
+#plt.plot_date()
 plt.xlabel('Date / Time')
 plt.ylabel('PM 10')
 plt.title('2 Hour TWA for Trolex data')
-plt.ylim([0,200])
+plt.ylim([0,100])
     
     
 plt.show()
